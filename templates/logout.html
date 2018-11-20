@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Logout confirmation
+{% endblock %}
+
+{% block body %}
+<div class="container" align="center">
+    <p><b>Log out Confirm?</b></p>
+    <form action="logout.html" method="get">
+        <button class="btn btn-danger" name="NO">No</button>
+        <button class="btn btn-primary" name="YES">Yes</button>
+    </form>
+
+
+</div>
