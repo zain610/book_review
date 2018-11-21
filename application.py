@@ -1,7 +1,6 @@
-import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for, escape
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -25,13 +24,16 @@ db = scoped_session(sessionmaker(bind=engine))
 # GEt data from GoodReads API
 
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def index():
-    if 'username' in session:
-        res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": ["1632168146", "3401063472"]})
-        return render_template("index.html", message='Hey, {}!'.format(escape(session['username']), data = res.json()))
-    else:
-        return redirect(url_for("login"))
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": ["1632168146", "3401063472"]})
+
+    try:
+        message = session['message']
+    except KeyError:
+        return render_template("index.html", data=res.json())
+    return render_template("index.html", data = res.json(), message=message)
+
 
 
 @app.route("/register", methods=["POST", "GET"])
@@ -60,28 +62,38 @@ def register():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    if request.form.get('username') is None:
-        return render_template("login.html")
-    else:
-
+    if request.method == 'POST':
         try:
             username = request.form.get('username')
             password = request.form.get('password')
         except ValueError:
-            return render_template("error.html", message="Invalid credentials")
+            return render_template("error.html", message="Invalid credentials provided")
 
-        if db.execute("Select (username, password) from authenticate where username=:username and password=:password",
-                                        {"username": username, "password": password}):
-            session['username'] = request.form['username']
+        '''
+        fetch data 
+        fetchone => to convert the resultproxy from db.execute to a tuple. mutable tuple
+        
+        '''
+        data = db.execute("Select (username, password) from authenticate where username=:username and password=:password",
+                                        {"username": username, "password": password}).fetchone()
+        print(data)
+        if data:
+            # store messages inside session. to access later inside index.html
+            message = "Successfully logged in MR.", username
+            session["message"] = message
             return redirect(url_for('index'))
+    return render_template('login.html')
+
+
 
 
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
-    session.pop('username')
+    session.pop('username', None)
+    session.pop('message', None)
     return redirect(url_for('index'))
 
 
 
-
+# REFACTOR
