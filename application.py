@@ -27,12 +27,11 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=["POST", "GET"])
 def index():
     res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": ["1632168146", "3401063472"]})
-
     try:
-        message = session['message']
+        username=session['username']
     except KeyError:
-        return render_template("index.html", data=res.json())
-    return render_template("index.html", data = res.json(), message=message)
+        return render_template("index.html", data=res.json(), message=("Hello, Please Login!"))
+    return render_template("index.html", data = res.json(), message=("Hello "+ username))
 
 
 
@@ -62,38 +61,42 @@ def register():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
+    '''
+    Login is run when either:
+    -> user clicks on login
+    ->manually types url/login
+    :return:
+    -> Checks if username and password exists in db.
+    -> Then Logs the username in a session.
+    '''
     if request.method == 'POST':
         try:
+            # THis scripts retrieves and then checks if the user exists in db
             username = request.form.get('username')
             password = request.form.get('password')
+            print(username, password)
+
+            '''
+            fetch data 
+            fetchone => to convert the resultproxy from db.execute to a tuple. mutable tuple
+
+            '''
+            data = db.execute(
+                "Select (username, password) from authenticate where username=:username and password=:password",
+                {"username": username, "password": password}).fetchone()
+            print(data)
+            if data:
+                # store messages inside session. to access later inside index.html
+                session["username"] = username
+                return redirect(url_for('index'))
+            return render_template('login.html')
         except ValueError:
             return render_template("error.html", message="Invalid credentials provided")
-
-        '''
-        fetch data 
-        fetchone => to convert the resultproxy from db.execute to a tuple. mutable tuple
-        
-        '''
-        data = db.execute("Select (username, password) from authenticate where username=:username and password=:password",
-                                        {"username": username, "password": password}).fetchone()
-        print(data)
-        if data:
-            # store messages inside session. to access later inside index.html
-            message = "Successfully logged in MR.", username
-            session["message"] = message
-            return redirect(url_for('index'))
-    return render_template('login.html')
-
-
 
 
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
     session.pop('username', None)
-    session.pop('message', None)
     return redirect(url_for('index'))
 
-
-
-# REFACTOR
