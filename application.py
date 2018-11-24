@@ -26,7 +26,13 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": ["1632168146", "3401063472"]})
+    '''
+    Main PAge of the web app. Here users will first see the homepage and decide what to do.
+    :return: Index.html and process data to be showed on this page.
+    '''
+    isbn = []
+
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": [isbn]})
     try:
         username=session['username']
     except KeyError:
@@ -86,14 +92,15 @@ def login():
                 {"username": username, "password": password}).fetchone()
             print(data)
             if data:
-                # store messages inside session. to access later inside index.html
+                # store username inside session. to access later inside index.html. this shows that the user has logged in
                 session["username"] = username
-                return redirect(url_for('index'))
+                return redirect(url_for('search'))
             return render_template('login.html')
         except ValueError:
             return render_template("error.html", message="Invalid credentials provided")
 
-
+@app.route("/search", methods=["POST", "GET"])
+def search():
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
