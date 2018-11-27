@@ -14,7 +14,7 @@
         </div>
     </form>
     <div class="container">
-        <h2>Title Data</h2>
+        <h2>Title Search </h2>
         <table class="table">
             <thead>
             <tr>
@@ -25,19 +25,66 @@
             </tr>
             </thead>
             <tbody>
-                {% for entry in title_data %}
-                    <td>{{ entry[0]}}</td>
+            {% for entry in title_data %}
+                <tr>
+                    <td>{{ entry[0] }}</td>
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
-                {% else %}
-                    <td>Title Data is empty</td>
-                {% endfor %}
+                </tr>
+            {% else %}
+                <td>Title Data is empty</td>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h2>ISBN Search</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in isbn_data %}
+                <tr>
+                    <td>{{ entry[0] }}</td>
+                    <td>{{ entry[1] }}</td>
+                    <td>{{ entry[2] }}</td>
+                    <td>{{ entry[4] }}</td>
+                </tr>
+            {% else %}
+                <td>ISBN Data is empty</td>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h2>Author Search </h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in author_data %}
+                <tr>
+                    <td>{{ entry[0] }}</td>
+                    <td>{{ entry[1] }}</td>
+                    <td>{{ entry[2] }}</td>
+                    <td>{{ entry[4] }}</td>
+                </tr>
+            {% else %}
+                <td>Author Data is empty</td>
+            {% endfor %}
             </tbody>
         </table>
 
     </div>
-
 
 
 {% endblock %}

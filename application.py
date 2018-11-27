@@ -120,7 +120,7 @@ def search():
             "Select * from book where title like (:keyword)",
             {"keyword": word}
         ).fetchall()
-        print(title_data)
+        print(type(title_data))
         # get isbn data
         isbn_data = db.execute(
             "Select * from book where isbn like (:isbn)",
@@ -133,7 +133,7 @@ def search():
             {"author": word}
         ).fetchall()
         print(author_data)
-        return render_template("search.html", title_data = title_data)
+        return render_template("search.html", title_data = title_data, isbn_data = isbn_data, author_data = author_data)
     return render_template("search.html")
 
 
