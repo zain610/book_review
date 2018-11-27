@@ -1,11 +1,43 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Search Site
+    Search Site
 {% endblock %}
 
 
 {% block body %}
+    <h1>Search</h1>
+    <form action="{{url_for('search')}}" method="post">
+        <div class="form-group">
+            <label for="formGroupExampleInput">Example label</label>
+            <input type="text" name="keyword" class="form-control" placeholder="Enter keyword">
+        </div>
+    </form>
+    <div class="container">
+        <h2>Title Data</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for entry in title_data %}
+                    <td>{{ entry[0]}}</td>
+                    <td>{{ entry[1] }}</td>
+                    <td>{{ entry[2] }}</td>
+                    <td>{{ entry[4] }}</td>
+                {% else %}
+                    <td>Title Data is empty</td>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
 
 
 {% endblock %}
