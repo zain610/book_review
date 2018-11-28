@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-
 {% block title %}
     Search Site
 {% endblock %}
@@ -22,6 +21,7 @@
                 <th scope="col">ISBN</th>
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -31,6 +31,7 @@
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
                 </tr>
             {% else %}
                 <td>Title Data is empty</td>
@@ -45,6 +46,7 @@
                 <th scope="col">ISBN</th>
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -54,6 +56,8 @@
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
+
                 </tr>
             {% else %}
                 <td>ISBN Data is empty</td>
@@ -68,6 +72,8 @@
                 <th scope="col">ISBN</th>
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
+                <th scope="col">Actions</th>
+
             </tr>
             </thead>
             <tbody>
@@ -77,6 +83,8 @@
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
+
                 </tr>
             {% else %}
                 <td>Author Data is empty</td>

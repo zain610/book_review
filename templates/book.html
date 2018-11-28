@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block title %}
+Book Details
+{% endblock %}
+
+{% block body %}
+<div class="contianer-fluid" align="center">
+    <p>isbn: {{ message[1] }}</p>
+    <p>title: {{ message[2] }}</p>
+    <p>author: {{ message[4] }}</p>
+    <p>publication year: {{ message[3] }}</p>
+</div>
+{% endblock %}

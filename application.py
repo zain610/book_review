@@ -36,9 +36,9 @@ def index():
     try:
         username=session['username']
         print(username)
-        return render_template("index.html", data=res.json(), message=("Hello "+ username ))
+        return render_template("index.html", message=("Hello "+ username ))
     except KeyError:
-        return render_template("index.html", data=res.json(), message=("Hello, Please Login!"))
+        return render_template("index.html", message=("Hello, Please Login!"))
 
 
 @app.route("/register", methods=["POST", "GET"])
@@ -111,29 +111,33 @@ def search():
     :return:
     '''
     if request.method == "POST":
-        keyword = str(request.form.get('keyword'))
-        keyword = keyword.title()
-        word = "%" + keyword + "%"
-        print(word)
-        # get title data
-        title_data = db.execute(
-            "Select * from book where title like (:keyword)",
-            {"keyword": word}
-        ).fetchall()
-        print(type(title_data))
-        # get isbn data
-        isbn_data = db.execute(
-            "Select * from book where isbn like (:isbn)",
-            {"isbn": word}
-        ).fetchall()
-        print(isbn_data)
-        # get author data
-        author_data = db.execute(
-            "Select * from book where author like (:author)",
-            {"author": word}
-        ).fetchall()
-        print(author_data)
-        return render_template("search.html", title_data = title_data, isbn_data = isbn_data, author_data = author_data)
+        try:
+            session['username']
+            keyword = str(request.form.get('keyword'))
+            keyword = keyword.title()
+            word = "%" + keyword + "%"
+            print(word)
+            # get title data
+            title_data = db.execute(
+                "Select * from book where title like (:keyword)",
+                {"keyword": word}
+            ).fetchall()
+            print(type(title_data))
+            # get isbn data
+            isbn_data = db.execute(
+                "Select * from book where isbn like (:isbn)",
+                {"isbn": word}
+            ).fetchall()
+            print(isbn_data)
+            # get author data
+            author_data = db.execute(
+                "Select * from book where author like (:author)",
+                {"author": word}
+            ).fetchall()
+            print(author_data)
+            return render_template("search.html", title_data = title_data, isbn_data = isbn_data, author_data = author_data)
+        except KeyError:
+            return render_template("index.html", message=("Hello, Please Login!"))
     return render_template("search.html")
 
 
@@ -141,4 +145,16 @@ def search():
 def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
+
+@app.route("/book/<isbn>", methods=["POST", "GET"])
+def book(isbn):
+    try:
+        session['username']
+        book = db.execute("Select * from book where isbn = :isbn", {"isbn": isbn}).fetchone()
+        print(isbn, book)
+        return render_template('/book.html', message=book)
+
+    except KeyError:
+        return render_template("index.html", message=("Hello, Please Login!"))
+
 
