@@ -1,14 +1,41 @@
 {% extends "index.html" %}
 
 {% block title %}
-Book Details
+    Book Details
 {% endblock %}
 
 {% block body %}
-<div class="contianer-fluid" align="center">
-    <p>isbn: {{ message[1] }}</p>
-    <p>title: {{ message[2] }}</p>
-    <p>author: {{ message[4] }}</p>
-    <p>publication year: {{ message[3] }}</p>
-</div>
+    <div class="contianer-fluid">
+        <div class="row">
+            <div class="col-sm">
+                <p>isbn: {{ message[1] }}</p>
+                <p>title: {{ message[2] }}</p>
+                <p>author: {{ message[4] }}</p>
+                <p>publication year: {{ message[3] }}</p>
+            </div>
+            <div class="col-sm">
+                <h2>Reviews</h2>
+                <ul>
+                    {% for item in reviews %}
+                        <li>{{ item[1] }} by {{ item[0] }}</li>
+                    {% else %}
+                        <li>No reviews yet</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-sm">
+                <h2>Enter Your reviews Here</h2>
+                <form action="{{ url_for('book', isbn=message[1]) }}" method="post">
+                    <div class="form-group">
+                        <label for="inputlg">Large input</label>
+                        <input name="review" class="form-control input-lg" id="inputlg" type="text">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+
 {% endblock %}

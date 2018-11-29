@@ -22,8 +22,6 @@ engine = create_engine(DATABASE_URL)
 db = scoped_session(sessionmaker(bind=engine))
 
 # GEt data from GoodReads API
-
-
 @app.route("/", methods=["POST", "GET"])
 def index():
     '''
@@ -148,13 +146,13 @@ def logout():
 
 @app.route("/book/<isbn>", methods=["POST", "GET"])
 def book(isbn):
-    try:
-        session['username']
-        book = db.execute("Select * from book where isbn = :isbn", {"isbn": isbn}).fetchone()
-        print(isbn, book)
-        return render_template('/book.html', message=book)
-
-    except KeyError:
-        return render_template("index.html", message=("Hello, Please Login!"))
-
+    book = db.execute("Select * from book where isbn = :isbn", {"isbn": isbn}).fetchone()
+    display_reviews = db.execute("Select username_review, review from reviews where isbn_review = :isbn", {"isbn": isbn}).fetchall()
+    if request.form.get('review') is not None:
+        username = session['username']
+        review = request.form.get('review')
+        print(display_reviews, review, username)
+        db.execute("Insert into reviews (username_review, isbn_review, review) values (:username, :isbn, :review)", {"username": username, "isbn": isbn, "review": review})
+        db.commit()
+    return render_template('/book.html', message=book, reviews=display_reviews)
 
