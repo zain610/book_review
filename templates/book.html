@@ -5,6 +5,22 @@
 {% endblock %}
 
 {% block body %}
+    <form action="{{url_for('login')}}" method="POST">
+        <button class="btn btn-primary">Login</button>
+    </form>
+    <br>
+    <form action="{{url_for('register')}}" method="POST">
+        <button class="btn btn-primary">Register</button>
+    </form>
+    <br>
+
+    <form action="{{url_for('logout')}}" method="POST">
+        <button class="btn btn-primary">Logout</button>
+    </form>
+    <br>
+    <form action="{{url_for('search')}}" method="POST">
+        <button class="btn btn-primary">Search</button>
+    </form>
     <div class="contianer-fluid">
         <div class="row">
             <div class="col-sm">
@@ -18,6 +34,8 @@
                 <ul>
                     {% for item in reviews %}
                         <li>{{ item[1] }} by {{ item[0] }}</li>
+                        {#                        <li><a class="btn btn-primary" href="{{ url_for('book',  }}" role="button">Review</a></li>#}
+
                     {% else %}
                         <li>No reviews yet</li>
                     {% endfor %}
@@ -27,8 +45,7 @@
                 <h2>Enter Your reviews Here</h2>
                 <form action="{{ url_for('book', isbn=message[1]) }}" method="post">
                     <div class="form-group">
-                        <label for="inputlg">Large input</label>
-                        <input name="review" class="form-control input-lg" id="inputlg" type="text">
+                        <input name="review" placeholder="Enter review" class="form-control input-lg" id="inputlg" type="text">
                     </div>
                 </form>
             </div>
