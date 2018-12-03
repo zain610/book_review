@@ -1,6 +1,6 @@
 import requests
 
-from flask import Flask, flash,session, render_template, request, redirect, url_for
+from flask import Flask, flash,session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -138,6 +138,10 @@ def search():
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
+    '''
+    Log people out of the page
+    :return: removes username from session and returns user to the idnex page
+    '''
     session.pop('username', None)
     return redirect(url_for('index'))
 
@@ -180,5 +184,21 @@ def book(isbn):
         'avg_rating': avg_rating,
         'goodreads_data': gr_data,
     }
-    print(data)
-    return render_template('/book.html', message=book, reviews=display_reviews, avg_rating = avg_rating, gr_data = gr_data)
+    # print(data)
+    return render_template('/book.html', username = username, message=book, reviews=display_reviews, avg_rating = avg_rating, gr_data = gr_data)
+
+
+@app.route("/api/<isbn>", methods=["POST","GET"])
+def api(isbn):
+    data = db.execute("Select isbn, title, author, year_publication, count(review) as count_review, round(avg(rating), 2) as avg_rating from book b join reviews r on b.isbn = r.isbn_review where b.isbn=:isbn group by b.isbn, b.title, b.author, b.year_publication",
+                      {"isbn": isbn}).fetchone()
+    res = {
+        "title": data.title,
+        "author": data.author,
+        "year": data.year_publication,
+        "isbn": data.isbn,
+        "review_count": data.count_review,
+        "average_rating": data.avg_rating
+    }
+    print(res)
+    return render_template('/api.html')

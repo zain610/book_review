@@ -22,13 +22,11 @@
                 <p><b>The average rating for this book is: </b> {{ avg_rating }}</p>
                     {% for item in reviews %}
                         <li><b>Review:</b> {{ item[1] }} and <b>Rating:</b> {{ item[2] }} by {{ item[0] }}
-                            {% if session['username'] == item[0] %}
-                            <a class="btn btn-primary" href="" role="button">Update</a></li>
-                        {% endif %}
+                            {% if username == item[0] %}
+                                <a class="btn btn-primary" href="" role="button">Update</a>
+                            {% endif %}
+                        </li>
                         <br>
-
-                        {#                        <li><a class="btn btn-primary" href="{{ url_for('book',  }}" role="button">Review</a></li>#}
-
                     {% else %}
                         <li>No reviews yet</li>
 
