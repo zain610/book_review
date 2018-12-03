@@ -198,7 +198,7 @@ def api(isbn):
         "year": data.year_publication,
         "isbn": data.isbn,
         "review_count": data.count_review,
-        "average_rating": data.avg_rating
+        "average_rating": str(data.avg_rating)
     }
     print(res)
-    return render_template('/api.html')
+    return jsonify(res)
