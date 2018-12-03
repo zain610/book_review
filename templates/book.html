@@ -5,22 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <form action="{{url_for('login')}}" method="POST">
-        <button class="btn btn-primary">Login</button>
-    </form>
-    <br>
-    <form action="{{url_for('register')}}" method="POST">
-        <button class="btn btn-primary">Register</button>
-    </form>
-    <br>
-
-    <form action="{{url_for('logout')}}" method="POST">
-        <button class="btn btn-primary">Logout</button>
-    </form>
-    <br>
-    <form action="{{url_for('search')}}" method="POST">
-        <button class="btn btn-primary">Search</button>
-    </form>
+    {% include 'function.html' %}
     <div class="contianer-fluid">
         <div class="row">
             <div class="col-sm">
@@ -28,16 +13,25 @@
                 <p>title: {{ message[2] }}</p>
                 <p>author: {{ message[4] }}</p>
                 <p>publication year: {{ message[3] }}</p>
+                <h3>GoodReads Data:</h3>
+                <p>Average Ratings: {{ gr_data[1] }}  By {{ gr_data[0] }} Reviewers</p>
             </div>
             <div class="col-sm">
                 <h2>Reviews</h2>
                 <ul>
+                <p><b>The average rating for this book is: </b> {{ avg_rating }}</p>
                     {% for item in reviews %}
-                        <li>{{ item[1] }} by {{ item[0] }}</li>
+                        <li><b>Review:</b> {{ item[1] }} and <b>Rating:</b> {{ item[2] }} by {{ item[0] }}
+                            {% if session['username'] == item[0] %}
+                            <a class="btn btn-primary" href="" role="button">Update</a></li>
+                        {% endif %}
+                        <br>
+
                         {#                        <li><a class="btn btn-primary" href="{{ url_for('book',  }}" role="button">Review</a></li>#}
 
                     {% else %}
                         <li>No reviews yet</li>
+
                     {% endfor %}
                 </ul>
             </div>
@@ -46,6 +40,13 @@
                 <form action="{{ url_for('book', isbn=message[1]) }}" method="post">
                     <div class="form-group">
                         <input name="review" placeholder="Enter review" class="form-control input-lg" id="inputlg" type="text">
+                        <div class="slidecontainer">
+                            <label>Rating</label>
+                            <input type="range" min="1" max="5" value="1" class="slider" id="myRange" name="rating">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary">Submit</button>
+                        </div>
                     </div>
                 </form>
             </div>

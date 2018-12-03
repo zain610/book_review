@@ -1,6 +1,6 @@
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, flash,session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -28,9 +28,6 @@ def index():
     Main PAge of the web app. Here users will first see the homepage and decide what to do.
     :return: Index.html and process data to be showed on this page.
     '''
-    isbn = []
-    res = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "jUV1zj5KRLBJxzNzllbvQw", "isbns": "0441172717,0141439602"})
-    print(res)
     try:
         username=session['username']
         print(username)
@@ -92,6 +89,7 @@ def login():
             if data:
                 # store username inside session. to access later inside index.html. this shows that the user has logged in
                 session["username"] = username
+                flash('You were successfully logged in')
                 return redirect(url_for('search'))
             return render_template('login.html')
         except ValueError:
@@ -146,16 +144,41 @@ def logout():
 
 @app.route("/book/<isbn>", methods=["POST", "GET"])
 def book(isbn):
+    '''
+    Each user can enter, view and update their review and rating for a particular book.
+    :param isbn: isbn input from url
+    :return: page containing book dets, reviews by other users and input form for reviews.
+    '''
+    params = {
+        'key': 'jUV1zj5KRLBJxzNzllbvQw',
+        'isbns': isbn
+    }
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params = params).json()
+    gr_ratings_count = res['books'][0]['work_ratings_count']
+    gr_average_rating = res['books'][0]['average_rating']
+    gr_data = [gr_ratings_count, gr_average_rating]
     username = session['username']
     book = db.execute("Select * from book where isbn = :isbn", {"isbn": isbn}).fetchone()
-    display_reviews = db.execute("Select username_review, review from reviews where isbn_review = :isbn",
+    display_reviews = db.execute("Select username_review, review, rating from reviews where isbn_review = :isbn",
                                  {"isbn": isbn}).fetchall()
     review_by_username = db.execute("Select username_review from reviews where isbn_review = :isbn and username_review = :username",
                                     {"isbn": isbn, "username": username}).fetchall()
+    average_rating = db.execute('Select AVG (rating) from reviews').fetchone()
+    avg_rating = round(average_rating[0], 2)
     if request.form.get('review') is not None:
         if len(review_by_username) < 1:
             review = request.form.get('review')
-            print(display_reviews, review, username)
-            db.execute("Insert into reviews (username_review, isbn_review, review) values (:username, :isbn, :review)", {"username": username, "isbn": isbn, "review": review})
+            rating = request.form.get('rating')
+            print(display_reviews, review, rating, username, average_rating)
+            db.execute("Insert into reviews (username_review, isbn_review, review, rating) values (:username, :isbn, :review, :rating)", {"username": username, "isbn": isbn, "review": review, "rating": rating})
             db.commit()
-    return render_template('/book.html', message=book, reviews=display_reviews)
+
+    data = {
+        'username': username,
+        'book': book,
+        'reviews': display_reviews,
+        'avg_rating': avg_rating,
+        'goodreads_data': gr_data,
+    }
+    print(data)
+    return render_template('/book.html', message=book, reviews=display_reviews, avg_rating = avg_rating, gr_data = gr_data)
