@@ -176,7 +176,7 @@ def book(isbn):
                                  {"isbn": isbn}).fetchall()
     review_by_username = db.execute("Select username_review from reviews where isbn_review = :isbn and username_review = :username",
                                     {"isbn": isbn, "username": username}).fetchall()
-    average_rating = db.execute('Select AVG (rating) from reviews').fetchone()
+    average_rating = db.execute('Select AVG (rating) from reviews where isbn_review= :isbn', {"isbn": isbn}).fetchone()
     avg_rating = round(average_rating[0], 2)
     if request.form.get('review') is not None:
         if len(review_by_username) < 1:
@@ -186,13 +186,13 @@ def book(isbn):
             db.execute("Insert into reviews (username_review, isbn_review, review, rating) values (:username, :isbn, :review, :rating)", {"username": username, "isbn": isbn, "review": review, "rating": rating})
             db.commit()
 
-    data = {
-        'username': username,
-        'book': book,
-        'reviews': display_reviews,
-        'avg_rating': avg_rating,
-        'goodreads_data': gr_data,
-    }
+    # data = {
+    #     'username': username,
+    #     'book': book,
+    #     'reviews': display_reviews,
+    #     'avg_rating': avg_rating,
+    #     'goodreads_data': gr_data,
+    # }
     # print(data)
     return render_template('/book.html', username = username, message=book, reviews=display_reviews, avg_rating = avg_rating, gr_data = gr_data)
 
