@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="book-review-sql-flask-api" uuid="188758e5-be07-4b45-a75b-4df3465f46b6">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" family="POSTGRES" exact-version="0.0" />
+      <secret-storage>master_key</secret-storage>
+      <first-sync>true</first-sync>
+      <user-name>stzunhlprsilqe</user-name>
+    </data-source>
+    <data-source name="book-review-sql-flask-api [2]" uuid="a4c230d4-7fc0-4d84-abfe-7f7a33644a90">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" family="POSTGRES" exact-version="0.0" />
+      <secret-storage>master_key</secret-storage>
+      <first-sync>true</first-sync>
+      <user-name>stzunhlprsilqe</user-name>
+    </data-source>
+  </component>
+</project>

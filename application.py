@@ -1,10 +1,11 @@
 import requests
 
+from datetime import timedelta
 from flask import Flask, flash,session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
+from flask import Flask, render_template
 
 DATABASE_URL = "postgres://stzunhlprsilqe:a3f1f9f217e9749383753f55b9a408c6582364ab75f2c36c5781537ee68aa577@ec2-50-17-203-51.compute-1.amazonaws.com:5432/demfabv2th1r11"
 app = Flask(__name__)
@@ -13,8 +14,9 @@ app = Flask(__name__)
 #     raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=1)
 Session(app)
 
 # Set up database
@@ -30,7 +32,6 @@ def index():
     '''
     try:
         username=session['username']
-        print(username)
         return render_template("index.html", message=("Hello "+ username ))
     except KeyError:
         return render_template("index.html", message=("Hello, Please Login!"))
@@ -38,6 +39,13 @@ def index():
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
+    '''
+    Page for users to register.
+    Input data is checked for if user exists in the db
+    Then input data is stored into the db.
+
+    :return:
+    '''
     # Check if form is submitted
     if request.form.get('username') is None:
         return render_template("register.html")
@@ -89,7 +97,6 @@ def login():
             if data:
                 # store username inside session. to access later inside index.html. this shows that the user has logged in
                 session["username"] = username
-                flash('You were successfully logged in')
                 return redirect(url_for('search'))
             return render_template('login.html')
         except ValueError:
@@ -190,15 +197,22 @@ def book(isbn):
 
 @app.route("/api/<isbn>", methods=["POST","GET"])
 def api(isbn):
+    '''
+    query retrieves relevant data from db
+    :param isbn:
+    :return: json object res
+    '''
     data = db.execute("Select isbn, title, author, year_publication, count(review) as count_review, round(avg(rating), 2) as avg_rating from book b join reviews r on b.isbn = r.isbn_review where b.isbn=:isbn group by b.isbn, b.title, b.author, b.year_publication",
                       {"isbn": isbn}).fetchone()
     res = {
         "title": data.title,
         "author": data.author,
-        "year": data.year_publication,
+        "year": int(data.year_publication),
         "isbn": data.isbn,
         "review_count": data.count_review,
-        "average_rating": str(data.avg_rating)
+        "average_rating": int(data.avg_rating)
     }
     print(res)
     return jsonify(res)
+
+
