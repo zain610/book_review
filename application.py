@@ -177,7 +177,10 @@ def book(isbn):
     review_by_username = db.execute("Select username_review from reviews where isbn_review = :isbn and username_review = :username",
                                     {"isbn": isbn, "username": username}).fetchall()
     average_rating = db.execute('Select AVG (rating) from reviews where isbn_review= :isbn', {"isbn": isbn}).fetchone()
-    avg_rating = round(average_rating[0], 2)
+    avg_rating = 0
+    if average_rating[0] is not None:
+        avg_rating = round(average_rating[0], 2)
+
     if request.form.get('review') is not None:
         if len(review_by_username) < 1:
             review = request.form.get('review')
