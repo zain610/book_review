@@ -219,4 +219,5 @@ def api(isbn):
     print(res)
     return jsonify(res)
 
-
+if __name__ == "__main__":
+    app.run()
