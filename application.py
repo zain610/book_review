@@ -10,8 +10,6 @@ from flask import Flask, render_template
 
 DATABASE_URL = "postgres://stzunhlprsilqe:a3f1f9f217e9749383753f55b9a408c6582364ab75f2c36c5781537ee68aa577@ec2-50-17-203-51.compute-1.amazonaws.com:5432/demfabv2th1r11"
 app = Flask(__name__)
-port = int(os.environ.get("PORT", 5000))
-app.run(debug=True, host='0.0.0.0', port=port)
 
 # Check for environment variable
 # if not os.environ[DATABASE_URL]:
@@ -220,4 +218,5 @@ def api(isbn):
     return jsonify(res)
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
