@@ -18,7 +18,7 @@ app = Flask(__name__)
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=1)
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=10)
 Session(app)
 
 # Set up database
