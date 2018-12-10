@@ -4,5 +4,11 @@
 <h1>Error</h1>
 <p>
     {{ message }}
+
 </p>
+<form action="{{ url_for('index') }}">
+    <div class="form-group">
+          <button class="btn btn-primary">Submit</button>
+        </div>
+</form>
 {% endblock %}
