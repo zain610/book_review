@@ -14,3 +14,17 @@ make sure you have the python3+ installed
 ```
 pip install -r requirements.txt
 ```
+
+## Basic API usage
+GET request to: <b>/api/isbn</b> where isbn is of book of choice.
+eg. <b>https://book-review-zain.herokuapp.com/api/0425238199</b> will return 
+```
+{
+"author": "Maya Banks",
+"average_rating": 2,
+"isbn": "0425238199",
+"review_count": 3,
+"title": "No Place to Run",
+"year": 2010
+}
+```
