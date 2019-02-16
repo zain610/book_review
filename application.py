@@ -105,7 +105,14 @@ def login():
             return render_template("error.html", message="Invalid credentials provided")
     return render_template('login.html')
 
-
+def search_sql(param, keyword):
+    print('param', param, 'keyword', keyword)
+    data = db.execute(
+        "Select * from book where (:param) like (:keyword)",
+        {'param': param, 'keyword': keyword}
+    ).fetchall()
+    print('data', data)
+    return data
 #
 @app.route("/search", methods=["POST", "GET"])
 def search():
@@ -118,31 +125,28 @@ def search():
     try:
         session['username']
         keyword = str(request.form.get('keyword'))
-        keyword = keyword.title()
-        word = "%" + keyword + "%"
-        print(word)
+        word = "%" + keyword.title() + "%"
+        # pass word into the search_sql function. % is the wildcard character to match the remaining characters
         # get title data
         title_data = db.execute(
             "Select * from book where title like (:keyword)",
             {"keyword": word}
         ).fetchall()
-        print(type(title_data))
+        print(title_data)
         # get isbn data
-        isbn_data = db.execute(
-            "Select * from book where isbn like (:isbn)",
-            {"isbn": word}
-        ).fetchall()
-        print(isbn_data)
+        isbn_data = search_sql('isbn', word)
         # get author data
-        author_data = db.execute(
-            "Select * from book where author like (:author)",
-            {"author": word}
-        ).fetchall()
-        print(author_data)
-        return render_template("search.html", title_data = title_data, isbn_data = isbn_data, author_data = author_data)
+        author_data = search_sql('author', word)
+        data = {
+            'title': title_data,
+            'isbn': isbn_data,
+            'author': author_data
+        }
+        return render_template("search.html", data=data)
     except KeyError:
         return render_template("index.html", message=("Hello, Please Login to access Search"))
     return render_template("search.html")
+
 
 
 @app.route("/logout", methods=["POST", "GET"])
@@ -155,13 +159,16 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/book/<isbn>", methods=["POST", "GET"])
-def book(isbn):
+@app.route("/book/<isbn>/<action>", methods=["POST", "GET"])
+def book(isbn, action='view'):
+    print('action', action)
     '''
     Each user can enter, view and update their review and rating for a particular book.
     :param isbn: isbn input from url
     :return: page containing book dets, reviews by other users and input form for reviews.
     '''
+
+
     params = {
         'key': 'jUV1zj5KRLBJxzNzllbvQw',
         'isbns': isbn
@@ -181,13 +188,15 @@ def book(isbn):
     if average_rating[0] is not None:
         avg_rating = round(average_rating[0], 2)
 
-    if request.form.get('review') is not None:
-        if len(review_by_username) < 1:
-            review = request.form.get('review')
-            rating = request.form.get('rating')
-            print(display_reviews, review, rating, username, average_rating)
-            db.execute("Insert into reviews (username_review, isbn_review, review, rating) values (:username, :isbn, :review, :rating)", {"username": username, "isbn": isbn, "review": review, "rating": rating})
-            db.commit()
+    if request.method == 'POST':
+        print('action', request.form.get('action'))
+        if request.form.get('review') == 'add':
+            if len(review_by_username) < 1:
+                review = request.form.get('review')
+                rating = request.form.get('rating')
+                print(display_reviews, review, rating, username, average_rating)
+                db.execute("Insert into reviews (username_review, isbn_review, review, rating) values (:username, :isbn, :review, :rating)", {"username": username, "isbn": isbn, "review": review, "rating": rating})
+                db.commit()
 
     # data = {
     #     'username': username,

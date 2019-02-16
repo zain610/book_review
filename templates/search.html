@@ -25,13 +25,13 @@
             </tr>
             </thead>
             <tbody>
-            {% for entry in title_data %}
+            {% for entry in data.title %}
                 <tr>
                     <td>{{ entry[0] }}</td>
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
-                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1], action='view') }}" role="button">Review</a></td>
                 </tr>
             {% else %}
                 <td>Title Data is empty</td>
@@ -50,13 +50,13 @@
             </tr>
             </thead>
             <tbody>
-            {% for entry in isbn_data %}
+            {% for entry in data.isbn %}
                 <tr>
                     <td>{{ entry[0] }}</td>
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
-                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1], action='view') }}" role="button">Review</a></td>
 
                 </tr>
             {% else %}
@@ -77,13 +77,13 @@
             </tr>
             </thead>
             <tbody>
-            {% for entry in author_data %}
+            {% for entry in data.author %}
                 <tr>
                     <td>{{ entry[0] }}</td>
                     <td>{{ entry[1] }}</td>
                     <td>{{ entry[2] }}</td>
                     <td>{{ entry[4] }}</td>
-                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1]) }}" role="button">Review</a></td>
+                    <td><a class="btn btn-primary" href="{{ url_for('book', isbn=entry[1], action="view") }}" role="button">Review</a></td>
 
                 </tr>
             {% else %}

@@ -1,8 +1,15 @@
 {% extends "index.html" %}
 
+{% block js %}
+<script>
+
+</script>
+{% endblock %}
+
 {% block title %}
     Book Details
 {% endblock %}
+
 
 {% block body %}
     {% include 'function.html' %}
@@ -23,7 +30,7 @@
                     {% for item in reviews %}
                         <li><b>Review:</b> {{ item[1] }} and <b>Rating:</b> {{ item[2] }} by {{ item[0] }}
                             {% if username == item[0] %}
-                                <a class="btn btn-primary" href="" role="button">Update</a>
+                                <a class="btn btn-primary" onclick="updateValue()" role="button">Update</a>
                             {% endif %}
                         </li>
                         <br>
@@ -35,7 +42,7 @@
             </div>
             <div class="col-sm">
                 <h2>Enter Your reviews Here</h2>
-                <form action="{{ url_for('book', isbn=message[1]) }}" method="post">
+                <form action="{{ url_for('book', isbn=message[1], action="add") }}" method="post">
                     <div class="form-group">
                         <input name="review" placeholder="Enter review" class="form-control input-lg" id="inputlg" type="text">
                         <div class="slidecontainer">
@@ -45,6 +52,7 @@
                         <div class="form-group">
                             <button class="btn btn-primary">Submit</button>
                         </div>
+
                     </div>
                 </form>
             </div>
