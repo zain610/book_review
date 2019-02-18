@@ -105,47 +105,70 @@ def login():
             return render_template("error.html", message="Invalid credentials provided")
     return render_template('login.html')
 
-def search_sql(param, keyword):
-    print('param', param, 'keyword', keyword)
-    data = db.execute(
-        "Select * from book where (:param) like (:keyword)",
-        {'param': param, 'keyword': keyword}
-    ).fetchall()
-    print('data', data)
-    return data
+
 #
 @app.route("/search", methods=["POST", "GET"])
 def search():
+    # def search_sql(param, keyword):
+    #     print('param', param, 'keyword', keyword)
+    #     data = db.execute(
+    #         "Select * from book where :param like :keyword",
+    #         {'param': param, 'keyword': keyword}
+    #     ).fetchall()
+    #     print('data', data)
+    #     return data
+
     '''
     Search page
     Take title, isbn, author name and output resutls
 
+
+    TODO: make a method for create sql statements.
     :return:
     '''
+    data = {
+    }
     try:
-        session['username']
-        keyword = str(request.form.get('keyword'))
-        word = "%" + keyword.title() + "%"
-        # pass word into the search_sql function. % is the wildcard character to match the remaining characters
-        # get title data
-        title_data = db.execute(
-            "Select * from book where title like (:keyword)",
-            {"keyword": word}
-        ).fetchall()
-        print(title_data)
-        # get isbn data
-        isbn_data = search_sql('isbn', word)
-        # get author data
-        author_data = search_sql('author', word)
-        data = {
-            'title': title_data,
-            'isbn': isbn_data,
-            'author': author_data
-        }
+        # session['username']
+
+        if request.method == 'POST':
+            keyword = str(request.form.get('keyword'))
+            word = "%" + keyword.title() + "%"
+            print(word)
+            # pass word into the search_sql function. % is the wildcard character to match the remaining characters
+            # get title data
+            '''
+            title_data = db.execute(
+                "Select * from book where title like (:keyword)",
+                {"keyword": word}
+            ).fetchall()
+            # get isbn data
+            isbn_data = db.execute(
+                "Select * from book where isbn like (:keyword)",
+                {"keyword": word}
+            ).fetchall()
+            # get author data
+            author_data = db.execute(
+                "Select * from book where author like (:keyword)",
+                {"keyword": word}
+            ).fetchall()
+            '''
+            data = db.execute(
+                "Select * from book where ( isbn like :word ) OR ( title like :word ) OR (author like :word )",
+                {"word": word}
+            ).fetchall()
+            print(data)
+
+            return jsonify({'data': [dict(r) for r in data]})
+
         return render_template("search.html", data=data)
     except KeyError:
         return render_template("index.html", message=("Hello, Please Login to access Search"))
-    return render_template("search.html")
+
+
+
+
+
 
 
 
@@ -209,25 +232,39 @@ def book(isbn, action='view'):
     return render_template('/book.html', username = username, message=book, reviews=display_reviews, avg_rating = avg_rating, gr_data = gr_data)
 
 
-@app.route("/api/<isbn>", methods=["POST","GET"])
-def api(isbn):
+@app.route("/api/<param>/<keyword>", methods=["POST","GET"])
+def api(param, keyword):
     '''
     query retrieves relevant data from db
     :param isbn:
     :return: json object res
     '''
-    data = db.execute("Select isbn, title, author, year_publication, count(review) as count_review, round(avg(rating), 2) as avg_rating from book b join reviews r on b.isbn = r.isbn_review where b.isbn=:isbn group by b.isbn, b.title, b.author, b.year_publication",
-                      {"isbn": isbn}).fetchone()
-    res = {
-        "title": data.title,
-        "author": data.author,
-        "year": int(data.year_publication),
-        "isbn": data.isbn,
-        "review_count": data.count_review,
-        "average_rating": int(data.avg_rating)
-    }
-    print(res)
-    return jsonify(res)
+    if param == 'isbn' or param == 'ISBN':
+        data = db.execute("Select isbn, title, author, year_publication, count(review) as count_review, round(avg(rating), 2) as avg_rating from book b join reviews r on b.isbn = r.isbn_review where b.isbn=:isbn group by b.isbn, b.title, b.author, b.year_publication",
+                          {"isbn": keyword}).fetchall()
+        res = []
+        print(data)
+        for entry in data:
+            res.append({
+                "title": entry.title,
+                "author": entry.author,
+                "year": int(entry.year_publication),
+                "isbn": entry.isbn,
+                "review_count": entry.count_review,
+            })
+        print(res)
+        return jsonify(res)
+
+    if param == 'author' or param == 'AUTHOR':
+        word = '%'+str(keyword)+'%'
+        data = db.execute(
+            "Select isbn, title, author, year_publication, count(review) as count_review, round(avg(rating), 2) as avg_rating from book b join reviews r on b.isbn = r.isbn_review where b.author like (:author) group by b.isbn, b.title, b.author, b.year_publication",
+            {"author": word}).fetchone()
+        print(data)
+        return jsonify('tits')
+
+
+
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

@@ -1,15 +1,45 @@
 {% extends "layout.html" %}
+
 {% block title %}
     Search Site
 {% endblock %}
 
+{% block js %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const request = new XMLHttpRequest();
+
+
+
+            const form = document.getElementById('searchForm')
+            form.addEventListener('submit', (e) => {
+                e.preventDefault()
+                request.onload = () => {
+                    alert(request.responseText)
+                }
+                const keyword = form.querySelector('#searchKeyword').value
+                // Add data to send with request
+                const searchData = new FormData();
+                searchData.append('keyword', keyword);
+                console.log('form', searchData,'keyword', keyword)
+
+                request.open('POST', '/search');
+                // Send request
+                request.send(searchData);
+
+            })
+
+        })
+    </script>
+{%  endblock %}
+
 
 {% block body %}
     <h1>Search</h1>
-    <form action="{{url_for('search')}}" method="post">
+    <form id="searchForm">
         <div class="form-group">
             <label for="formGroupExampleInput">Example label</label>
-            <input type="text" name="keyword" class="form-control" placeholder="Enter keyword">
+            <input id="searchKeyword" type="text" name="keyword" class="form-control" placeholder="Enter keyword">
         </div>
     </form>
     <div class="container">
@@ -38,6 +68,7 @@
             {% endfor %}
             </tbody>
         </table>
+
         <h2>ISBN Search</h2>
         <table class="table">
             <thead>
