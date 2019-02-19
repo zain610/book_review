@@ -137,7 +137,6 @@ def search():
             print(word)
             # pass word into the search_sql function. % is the wildcard character to match the remaining characters
             # get title data
-            '''
             title_data = db.execute(
                 "Select * from book where title like (:keyword)",
                 {"keyword": word}
@@ -152,14 +151,13 @@ def search():
                 "Select * from book where author like (:keyword)",
                 {"keyword": word}
             ).fetchall()
-            '''
-            data = db.execute(
-                "Select * from book where ( isbn like :word ) OR ( title like :word ) OR (author like :word )",
-                {"word": word}
-            ).fetchall()
-            print(data)
 
-            return jsonify({'data': [dict(r) for r in data]})
+            # data = db.execute(
+            #     "Select * from book where ( isbn like :word )  OR ( title like :word )  OR (author like :word ) ",
+            #     {"word": word}
+            # ).fetchall()
+
+            return jsonify({'title': [dict(row) for row in title_data], 'isbn': [dict(row) for row in isbn_data], 'author': [dict(row) for row in author_data]})
 
         return render_template("search.html", data=data)
     except KeyError:
