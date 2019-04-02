@@ -16,8 +16,9 @@ pip install -r requirements.txt
 ```
 
 ## Basic API usage
-GET request to: <b>/api/isbn</b> where isbn is of book of choice.
-eg. <b>https://book-review-zain.herokuapp.com/api/0425238199</b> will return 
+GET request to: <b>/api/isbn/:keyword</b> where keyword is of isbn of the book of your choice.
+Given that the book exists in our database, a request like this 
+<b>https://book-review-zain.herokuapp.com/api/0425238199</b> should return:
 ```
 {
 "author": "Maya Banks",
