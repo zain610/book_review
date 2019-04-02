@@ -2,8 +2,8 @@
 
 User can do the following:
 1. Register, Login, Logout of the website.
-2. Search for books based on title, auhtor, isbn
-3. Selected book can be reviewed read other people's reviews
+2. Search for books based on title, author, isbn
+3. Select a book, read and write reviews for the book! 📖
 
 
 PS. One review per user allowed. 
@@ -29,3 +29,4 @@ Given that the book exists in our database, a request like this
 "year": 2010
 }
 ```
+Thank you for visiting!
