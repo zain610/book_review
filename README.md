@@ -10,16 +10,16 @@ PS. One review per user allowed.
 
 ## Tech Stack
 1. Backend and Database
-  1. Flask && SQLAlchemy 
-  2. SQL
-  3. GoodReadsAPI
+    1. Flask && SQLAlchemy 
+    2. SQL
+    3. GoodReadsAPI
 2. Front End
-  1. HTML
-  2. CSS
-  3. Jinja2 ( templating engine )
+    1. HTML
+    2. CSS
+    3. Jinja2 ( templating engine )
 3. Other -- Designs, Project Managment
-  1. Trello
-  2. Adobe XD
+    1. Trello
+    2. Adobe XD
 
 ## Install
 make sure you have the python3+ installed
