@@ -10,9 +10,10 @@ PS. One review per user allowed.
 
 ## Tech Stack
 1. Backend and Database
-    1. Flask && SQLAlchemy 
+    1. Flask
     2. SQL
-    3. GoodReadsAPI
+    3. SQLAlchemy
+    4. GoodReadsAPI
 2. Front End
     1. HTML
     2. CSS
